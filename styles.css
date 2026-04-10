@@ -1,0 +1,403 @@
+:root {
+    --bg-dark: #050505;
+    --text-primary: #fdfbf7;
+    --text-subtitle: #d4af37; /* Luxury Gold */
+    --font-serif: 'Playfair Display', serif;
+    --font-sans: 'Montserrat', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    height: 100%;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden; /* Locked until unlocked */
+    overscroll-behavior: none;
+    height: 100%;
+}
+
+body.scroll-unlocked {
+    overflow-y: auto;
+}
+
+/* Ensure that reload states push scrolls to the top */
+body.loading {
+    opacity: 0;
+}
+
+/* App Background Layer: Video */
+.video-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    overflow: hidden;
+    background-color: #000;
+}
+
+#intro-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+}
+
+/* Central Prompt before play */
+.interaction-prompt {
+    position: absolute;
+    top: auto;
+    bottom: 25%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    z-index: 2;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+    pointer-events: none;
+}
+
+.interaction-prompt.hidden {
+    opacity: 0;
+}
+
+.prompt-text {
+    font-size: 1.2rem;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.mouse-icon {
+    width: 30px;
+    height: 50px;
+    border: 2px solid white;
+    border-radius: 15px;
+    position: relative;
+    opacity: 0.15;
+}
+
+.mouse-wheel {
+    width: 4px;
+    height: 8px;
+    background: white;
+    border-radius: 2px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scrollAnimation 1.5s infinite;
+}
+
+@keyframes scrollAnimation {
+    0% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, 15px); opacity: 0; }
+}
+
+/* Scroll Overlay (Above Video) */
+.scroll-wrapper {
+    position: relative;
+    z-index: 2;
+    pointer-events: none; 
+}
+
+body.scroll-unlocked .scroll-wrapper {
+    pointer-events: auto;
+}
+
+/* Snapping Elements */
+.snap-segment {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    /* Centers text in the TOP half, avoiding the 45vh footer */
+    align-items: flex-start;
+    padding-top: 15vh;
+}
+
+/* Text Containers directly on background */
+.reveal-content {
+    text-align: center;
+    transform: translateY(30px);
+    opacity: 0;
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 700px;
+}
+
+.reveal-content.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Scroll indicator after first screen appears */
+.scroll-indicator {
+    position: absolute;
+    bottom: 48vh; /* Positioned safely above the 45vh foreground */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    color: var(--text-subtitle);
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    transition: opacity 1.5s ease;
+}
+
+.scroll-indicator.active {
+    opacity: 0.8;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translate(-50%, 0); }
+    50% { transform: translate(-50%, 10px); }
+}
+
+/* Intro specific */
+.hero-name {
+    font-family: var(--font-serif);
+    font-size: 4.8rem;
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--text-primary);
+}
+
+.hero-weds {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 2rem;
+    color: var(--text-subtitle);
+    margin: 15px 0;
+}
+
+/* Second Page */
+.invitation-text {
+    font-size: 1.1rem;
+    font-weight: 300;
+    margin-bottom: 2rem;
+    color: #eaeaea;
+}
+
+.person-block {
+    margin: 20px 0;
+}
+
+.name-focus {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.undertext {
+    font-size: 0.9rem;
+    color: #dddddd;
+    margin-top: 8px;
+    line-height: 1.5;
+    max-width: 450px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.ampersand {
+    font-family: var(--font-serif);
+    font-size: 2.5rem;
+    color: var(--text-subtitle);
+    font-weight: 400;
+    margin: 15px 0;
+}
+
+/* Third Page (Date) */
+.date-focus {
+    font-family: var(--font-serif);
+    font-size: 3.2rem;
+    margin-bottom: 15px;
+    font-weight: 500;
+}
+
+.event-time {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: #eaeaea;
+}
+
+.event-time.highlight {
+    color: var(--text-subtitle);
+    font-weight: 500;
+}
+
+/* Fourth Page (Venue & Map) */
+.venue-label {
+    font-size: 0.9rem;
+    color: var(--text-subtitle);
+    letter-spacing: 5px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.venue-name {
+    font-family: var(--font-serif);
+    font-size: 3.5rem;
+    margin-bottom: 5px;
+    line-height: 1.1;
+    font-weight: 500;
+}
+
+.venue-sub {
+    font-size: 1.3rem; /* requested smaller than venue name */
+    font-weight: 300;
+    color: #e0e0e0;
+    margin-bottom: 30px;
+}
+
+.map-link {
+    text-decoration: none;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    transition: transform 0.3s ease;
+}
+
+.map-link:hover {
+    transform: translateY(-5px);
+}
+
+.map-icon-container {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(10,10,10,0.6);
+    border: 1px solid var(--text-subtitle);
+    padding: 12px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.map-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.map-pulse {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 50%;
+    border: 1px solid var(--text-subtitle);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+.map-button-text {
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    background: rgba(0,0,0,0.6);
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    letter-spacing: 1px;
+}
+
+/* Sticky Foreground Footer */
+.foreground-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45vh; /* Maximum vertical height is 45% */
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.foreground-footer img {
+    width: 100%;
+    height: 100%;
+    max-height: 45vh; 
+    object-fit: cover;
+    object-position: center; 
+    display: block;
+}
+
+.foreground-footer.active {
+    opacity: 1;
+}
+
+/* Responsiveness Constraints */
+@media (max-width: 768px) {
+    .snap-segment {
+        padding-top: 10vh;
+    }
+    .hero-name {
+        font-size: 3.5rem;
+    }
+    .hero-weds {
+        font-size: 1.5rem;
+    }
+    .name-focus {
+        font-size: 2.2rem;
+    }
+    .venue-name {
+        font-size: 2.5rem;
+    }
+    .venue-sub {
+        font-size: 1rem;
+    }
+    .undertext {
+        font-size: 0.8rem;
+    }
+    .date-focus {
+        font-size: 2.5rem;
+    }
+    .scroll-indicator {
+        bottom: 47vh;
+    }
+}
+
+@media (max-height: 700px) {
+    .snap-segment {
+        padding-top: 5vh;
+    }
+}

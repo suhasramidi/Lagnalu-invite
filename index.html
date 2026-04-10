@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lagna Pathrika Invitation</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Luxurious legible fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Fixed Video Container -->
+    <div class="video-wrapper">
+        <video id="intro-video" muted playsinline>
+            <source src="Sped.mp4" type="video/mp4">
+        </video>
+        <div class="interaction-prompt" id="interaction-prompt">
+            <span class="prompt-text">Touch</span>
+            <div class="mouse-icon">
+                <div class="mouse-wheel"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scrollable Area -->
+    <div class="scroll-wrapper" id="scroll-wrapper">
+        
+        <!-- FIRST PAGE (Shows immediately after video) -->
+        <section class="text-segment snap-segment first-page" id="first-page">
+            <div class="reveal-content text-top-half">
+                <h1 class="hero-name">Sahithi</h1>
+                <div class="hero-weds">weds</div>
+                <h1 class="hero-name">Harsha</h1>
+            </div>
+            
+            <div class="scroll-indicator fade-in-later">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <span>Scroll</span>
+            </div>
+        </section>
+        
+        <!-- SUBSEQUENT PAGES -->
+        <div class="content-wrapper" id="content-wrapper">
+            
+            <!-- Page 2 -->
+            <section class="text-segment snap-segment">
+                <div class="reveal-content text-top-half wide-content">
+                    <p class="invitation-text">You are cordially invited to the Lagna Pathrika Event of</p>
+                    
+                    <div class="person-block">
+                        <h2 class="name-focus">Sahithi</h2>
+                        <p class="undertext">D/O Dr. Ramidi Venkata Siva Rama Krishna Prasad & Ramidi Madhuri Devi</p>
+                    </div>
+
+                    <div class="ampersand">&amp;</div>
+
+                    <div class="person-block">
+                        <h2 class="name-focus">Harsha</h2>
+                        <p class="undertext">S/O Jampani Veeraiah & Jampani Anuradha</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Page 3 -->
+            <section class="text-segment snap-segment">
+                <div class="reveal-content text-top-half">
+                    <h2 class="date-focus">26th April, 2026</h2>
+                    <p class="event-time">10:30am to 11:30am</p>
+                    <p class="event-time highlight">Lunch 12pm onwards</p>
+                </div>
+            </section>
+
+            <!-- Page 4 Map/Venue -->
+            <section class="text-segment snap-segment">
+                <div class="reveal-content text-top-half map-content">
+                    <p class="venue-label">VENUE</p>
+                    <h2 class="venue-name">Rishitha Grand</h2>
+                    <p class="venue-sub">JN Road, Rajahmundry</p>
+                    
+                    <a href="https://maps.app.goo.gl/SWcS3kqMMsPZi9Cf9?g_st=ic" target="_blank" class="map-link">
+                        <div class="map-icon-container">
+                            <img src="map_icon.png" alt="Map icon" class="map-icon">
+                            <div class="map-pulse"></div>
+                        </div>
+                        <span class="map-button-text">Open Google Maps ↗</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Foreground Footer stays fixed above all content -->
+    <div class="foreground-footer" id="foreground-footer">
+        <img src="Foreground-2.png" alt="Sticky Footer Overlay">
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
