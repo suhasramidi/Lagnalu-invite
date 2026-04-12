@@ -36,11 +36,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // iOS WebKit exact first frame trick
+    // iOS WebKit exact first frame trick - async wrap to ensure metadata is processed
     if (video) {
-        // Must load to evaluate buffer
         video.load();
-        video.currentTime = 0.001; 
+        
+        // Wait for metadata so the frame seek is respected by WebKit
+        video.addEventListener('loadedmetadata', () => {
+            requestAnimationFrame(() => {
+                video.currentTime = 0.001;
+            });
+        }, { once: true });
+        
+        // Fallback constraint if loadedmetadata already fired or fails
+        setTimeout(() => {
+            if (video.currentTime === 0) video.currentTime = 0.001;
+        }, 50);
     }
 
     // Safely attempt the playback sequence

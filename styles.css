@@ -15,17 +15,22 @@
 }
 
 html {
-    scroll-snap-type: y mandatory;
+    scroll-snap-type: none; /* Snap applied to scroll-wrapper, not html — avoids iOS address bar reflow */
     height: 100%;
+    /* iOS address-bar-safe height */
+    min-height: -webkit-fill-available;
+    overscroll-behavior: none;
 }
 
 body {
     background-color: var(--bg-dark);
     color: var(--text-primary);
-    overflow: hidden; 
+    overflow: hidden;
     overscroll-behavior: none;
     height: 100%;
-    /* Standard 100% height replaces dvh to prevent browser bar-recalculation snap stuttering */
+    min-height: -webkit-fill-available; /* iOS Safari dynamic viewport fix */
+    position: fixed;         /* Prevents iOS rubber-band from exposing black */
+    width: 100%;
 }
 
 #boot-overlay {
@@ -42,20 +47,19 @@ body.ready #boot-overlay {
 }
 
 body.scroll-unlocked {
-    overflow-y: auto;
+    overflow: hidden; /* Scroll is handled by .scroll-wrapper, not body */
+    position: fixed;  /* Keep fixed to prevent iOS bounce issues */
 }
 
 .video-wrapper {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100%;
-    z-index: 1;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 3; /* Above static-bg (0) and scroll-wrapper (2) */
     overflow: hidden;
     background-color: #000;
     opacity: 1;
     transition: opacity 1.5s ease;
+    will-change: opacity; /* GPU compositing for smooth fade */
 }
 
 .video-wrapper.hide-post-play {
@@ -68,6 +72,8 @@ body.scroll-unlocked {
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+    /* iOS requires explicit display block to avoid inline baseline gap */
+    display: block;
 }
 
 .static-bg {
@@ -82,14 +88,14 @@ body.scroll-unlocked {
 /* Header adjusted downwards slightly */
 .sticky-header {
     position: fixed;
-    top: 12px;
+    top: max(8px, 1.2vh);
     left: 0;
     width: 100%;
     text-align: center;
     padding: 10px 0;
     font-family: var(--font-pt);
-    font-size: clamp(0.9rem, 5vw, 1.45rem); /* Dynamically scales sizing between extremes */
-    white-space: nowrap; /* Prevents flourishes from strictly breaking lines */
+    font-size: clamp(0.9rem, 5vw, 1.45rem);
+    white-space: nowrap;
     font-weight: 700;
     color: var(--text-punch);
     mix-blend-mode: multiply;
@@ -103,9 +109,9 @@ body.scroll-unlocked {
 
 .flourish {
     font-family: var(--font-playfair);
-    font-size: 1.25em; /* Increased ornamental size */
+    font-size: 1.25em;
     font-weight: 400;
-    opacity: 0.85; /* Increased opacity */
+    opacity: 0.85;
     margin: 0 6px;
     vertical-align: middle;
 }
@@ -123,7 +129,7 @@ body.scroll-unlocked .sticky-header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center; /* Enforce center alignment if text wraps */
+    text-align: center;
     gap: 12px;
     z-index: 6;
     opacity: 1;
@@ -173,10 +179,17 @@ body.scroll-unlocked .sticky-header {
 }
 
 .scroll-wrapper {
-    position: relative;
+    position: fixed;        /* Fixed so it fills the viewport like a native app */
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     z-index: 2;
     pointer-events: none;
-    display: none; 
+    display: none;
+    overflow-y: scroll;     /* Scroll lives here, not on body */
+    scroll-snap-type: y mandatory;
+    scroll-snap-stop: always;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch; /* Smooth momentum on older iOS */
 }
 
 body.scroll-unlocked .scroll-wrapper {
@@ -187,10 +200,9 @@ body.scroll-unlocked .scroll-wrapper {
 .main-font { font-family: var(--font-monte); }
 .secondary-font { font-family: var(--font-playfair); }
 
-/* Snapping restricted to vh to fix mobile bug */
 .snap-segment {
     scroll-snap-align: start;
-    scroll-snap-stop: normal; /* "normal" prevents jarring jerky locks during free-fling */
+    scroll-snap-stop: always; /* Ensures one section at a time, no skipping */
     height: 100vh;
     width: 100%;
     position: relative;
@@ -207,7 +219,7 @@ body.scroll-unlocked .scroll-wrapper {
 
 .reveal-content {
     text-align: center;
-    transform: translateY(20px);
+    transform: translateY(3vh);
     opacity: 0;
     transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
     width: 90%;
@@ -221,95 +233,95 @@ body.scroll-unlocked .scroll-wrapper {
 
 /* Intro specific */
 .hero-name {
-    font-size: 6.5rem; /* Increased size significantly */
+    font-size: clamp(4.5rem, 20vw, 8rem);
     font-weight: 400;
-    line-height: 1;
+    line-height: 1.2;
     color: var(--text-primary);
 }
 
 .hero-weds {
-    font-size: 5rem; /* Increased significantly */
+    font-size: clamp(3rem, 14vw, 6.5rem);
     color: var(--text-subtitle);
-    margin: -10px 0; /* Tightened gap visually */
+    margin: -1.5vh 0;
     line-height: 1;
 }
 
 /* Secondary */
 .invitation-text {
-    font-size: 1.25rem;
+    font-size: clamp(1rem, 2.6vh, 1.4rem);
     font-weight: 600;
-    margin-bottom: 1.5rem; /* Reduced to pull parent details higher */
+    margin-bottom: clamp(0.6rem, 1.8vh, 1.5rem);
     color: var(--text-primary);
 }
 
 .person-block {
-    margin: 5px 0;
+    margin: clamp(2px, 0.6vh, 5px) 0;
 }
 
 .name-focus {
-    font-size: 4.2rem; /* Increased size significantly */
+    font-size: clamp(1.8rem, 4.5vh, 3rem);
     font-weight: 400;
-    line-height: 1.1;
+    line-height: 1.2;
     color: var(--text-primary);
 }
 
 .undertext {
-    font-size: 0.95rem;
+    font-size: clamp(0.88rem, 2.1vh, 1.1rem);
     font-weight: 700; 
     color: var(--text-subtitle);
     margin-top: 2px;
-    line-height: 1.4;
+    line-height: 1.5;
 }
 
 .ampersand {
-    font-size: 3rem;
+    font-size: clamp(1.8rem, 4.5vh, 3rem);
     line-height: 1;
     color: var(--text-punch);
-    margin: 4px 0; /* Reeled inwards to reduce vertical gap */
+    margin: clamp(2px, 0.6vh, 4px) 0;
 }
 
 /* Date */
 .date-focus {
-    font-size: 2.8rem; /* Reduced slightly */
-    margin-bottom: 25px;
+    font-size: clamp(1.6rem, 5vh, 2.8rem);
+    margin-bottom: clamp(10px, 2.5vh, 25px);
     font-weight: 600;
 }
 
 .event-time {
-    font-size: 1.4rem;
-    margin-top: 10px;
+    font-size: clamp(0.95rem, 2.6vh, 1.4rem);
+    margin-top: clamp(5px, 1.2vh, 10px);
     font-weight: 600;
 }
 
 .event-time.highlight {
     font-weight: 700;
     color: var(--text-punch); 
-    font-size: 1.6rem;
-    margin-top: 20px;
+    font-size: clamp(1.05rem, 2.8vh, 1.6rem);
+    margin-top: clamp(8px, 1.8vh, 20px);
 }
 
 /* Venue Segment */
 .venue-label {
-    font-size: 1.1rem;
+    font-size: clamp(0.8rem, 2vh, 1.1rem);
     color: var(--text-subtitle);
-    letter-spacing: 5px;
-    margin-bottom: 5px;
+    letter-spacing: clamp(2px, 1vw, 5px);
+    margin-bottom: clamp(3px, 0.8vh, 5px);
     font-weight: 700;
 }
 
 .venue-name {
     font-family: var(--font-pt);
-    font-size: 3.2rem;
-    margin-bottom: 5px;
-    line-height: 1.1;
+    font-size: clamp(1.8rem, 5vh, 3.2rem);
+    margin-bottom: clamp(3px, 0.8vh, 5px);
+    line-height: 1.2;
     font-weight: 700;
 }
 
 .venue-sub {
-    font-size: 1.3rem;
+    font-size: clamp(0.9rem, 2.2vh, 1.3rem);
     font-weight: 600;
     color: var(--text-subtitle);
-    margin-bottom: 30px;
+    margin-bottom: clamp(14px, 3vh, 30px);
 }
 
 /* Map specific updates */
@@ -318,8 +330,10 @@ body.scroll-unlocked .scroll-wrapper {
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: clamp(8px, 2vw, 12px);
     transition: transform 0.3s ease;
+    min-height: 44px;
+    padding: 4px;
 }
 
 .map-link:hover {
@@ -327,8 +341,8 @@ body.scroll-unlocked .scroll-wrapper {
 }
 
 .map-icon-container {
-    width: 60px;
-    height: 60px;
+    width: clamp(42px, 11vw, 60px);
+    height: clamp(42px, 11vw, 60px);
     border-radius: 50%;
     background: transparent;
     padding: 0;
@@ -336,7 +350,7 @@ body.scroll-unlocked .scroll-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden; /* Enables deep scaling natively */
+    overflow: hidden;
 }
 
 .map-icon {
@@ -344,19 +358,19 @@ body.scroll-unlocked .scroll-wrapper {
     height: 100%;
     border-radius: 50%;
     object-fit: cover; 
-    transform: scale(2.2); /* Effectively crops inwards to half radius dynamically */
+    transform: scale(2.2);
 }
 
 .map-button-container {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: rgba(90, 55, 40, 0.15); /* Warm, subtle brown tone */
+    gap: clamp(5px, 1.5vw, 8px);
+    background: rgba(90, 55, 40, 0.15);
     border: 1px solid rgba(90, 55, 40, 0.3);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    padding: 10px 20px;
-    border-radius: 25px;
+    padding: clamp(7px, 1.5vh, 10px) clamp(14px, 4vw, 20px);
+    border-radius: clamp(16px, 4vw, 25px);
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 
@@ -376,7 +390,7 @@ body.scroll-unlocked .scroll-wrapper {
 /* Scroll indicator */
 .scroll-indicator {
     position: absolute;
-    bottom: 53vh; /* Pulled significantly higher out of interference zone */
+    bottom: 53vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -409,6 +423,7 @@ body.scroll-unlocked .scroll-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    will-change: opacity;
 }
 
 .foreground-footer img {
@@ -427,18 +442,33 @@ body.scroll-unlocked .scroll-wrapper {
 /* Responsive targeting */
 @media (max-width: 768px) {
     .snap-segment { padding-top: 13vh; }
-    .hero-name { font-size: 5rem; }
-    .hero-weds { font-size: 4rem; margin: -5px 0; }
-    .name-focus { font-size: 3.4rem; } /* Increased proportionally */
-    .venue-name { font-size: 2.6rem; }
-    .venue-sub { font-size: 1.1rem; }
-    .undertext { font-size: 0.85rem; }
-    .date-focus { font-size: 2.3rem; }
-    .scroll-indicator { bottom: 53vh; } /* Pulled higher */
+    .scroll-indicator { bottom: 53vh; }
     .interaction-prompt { bottom: 22vh; }
 }
 
+/* Short screens: tablets landscape, small Android phones */
 @media (max-height: 700px) {
-    .hero-name { font-size: 3.5rem; }
-    .hero-weds { font-size: 2.5rem; }
+    .snap-segment { padding-top: 10vh; }
+    .hero-name { font-size: clamp(3rem, 10vh, 4.5rem); }
+    .hero-weds { font-size: clamp(2.2rem, 8vh, 3.5rem); }
+    .name-focus { font-size: clamp(1.6rem, 4.5vh, 2.4rem) !important; }
+    .date-focus { font-size: clamp(1.4rem, 4.2vh, 2rem); }
+    .event-time { font-size: clamp(0.88rem, 2.2vh, 1.1rem); }
+    .event-time.highlight { font-size: clamp(0.95rem, 2.5vh, 1.2rem); }
+    .venue-name { font-size: clamp(1.6rem, 4.5vh, 2.2rem); }
+    .invitation-text { font-size: clamp(0.75rem, 2vh, 1rem); margin-bottom: 0.8rem; }
+}
+
+/* Very short screens: landscape phones */
+@media (max-height: 500px) {
+    .snap-segment { padding-top: 8vh; }
+    .hero-name { font-size: clamp(2rem, 8vh, 2.8rem); }
+    .hero-weds { font-size: clamp(1.5rem, 6vh, 2rem); }
+    .name-focus { font-size: clamp(1.6rem, 5vh, 2rem) !important; }
+    .invitation-text { font-size: clamp(0.68rem, 1.8vh, 0.85rem); margin-bottom: clamp(4px, 1vh, 8px); }
+    .ampersand { font-size: clamp(1.2rem, 3.5vh, 1.8rem); }
+    .undertext { font-size: clamp(0.58rem, 1.5vh, 0.75rem); }
+    .date-focus { font-size: clamp(1.1rem, 3.2vh, 1.6rem); }
+    .event-time { font-size: clamp(0.78rem, 2vh, 0.95rem); }
+    .venue-name { font-size: clamp(1.4rem, 4vh, 1.9rem); }
 }
