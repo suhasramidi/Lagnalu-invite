@@ -1,6 +1,5 @@
 :root {
     --bg-dark: #050505;
-    /* Deep rich tones for beige background mapping */
     --text-primary: #2d1810;
     --text-subtitle: #4a281b; 
     --text-punch: #592020;
@@ -18,7 +17,7 @@
 html {
     scroll-snap-type: y mandatory;
     scroll-behavior: smooth;
-    height: 100dvh;
+    height: 100%;
 }
 
 body {
@@ -26,13 +25,13 @@ body {
     color: var(--text-primary);
     overflow: hidden; 
     overscroll-behavior: none;
-    height: 100dvh;
+    height: 100%;
+    /* Standard 100% height replaces dvh to prevent browser bar-recalculation snap stuttering */
 }
 
-/* Base Preloader to prevent iOS flicker on background tab restoring */
 #boot-overlay {
     position: fixed;
-    top:0; left:0; width:100vw; height:100dvh;
+    top:0; left:0; width:100vw; height:100%;
     background: #000;
     z-index: 9999;
     opacity: 1;
@@ -47,13 +46,12 @@ body.scroll-unlocked {
     overflow-y: auto;
 }
 
-/* App Background Layer: Video */
 .video-wrapper {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100dvh;
+    height: 100%;
     z-index: 1;
     overflow: hidden;
     background-color: #000;
@@ -73,52 +71,53 @@ body.scroll-unlocked {
     pointer-events: none;
 }
 
-/* Static Replacement Background (image.png) */
 .static-bg {
     position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100dvh;
+    top: 0; left: 0; width: 100vw; height: 100%;
     background-image: url('image.png');
     background-size: cover;
     background-position: center;
-    z-index: 0; /* Sits beneath everything */
+    z-index: 0; 
 }
 
-/* Sticky Header */
+/* Header adjusted downwards slightly */
 .sticky-header {
     position: fixed;
-    top: 0;
+    top: 15px; /* Moved down */
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 18px 0;
+    padding: 10px 0;
     font-family: var(--font-pt);
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: var(--text-punch);
-    /* Dusty blend mode mixes nicely with image.png underneath */
     mix-blend-mode: multiply;
     opacity: 0;
     z-index: 5;
     pointer-events: none;
     transition: opacity 1.5s ease;
-    letter-spacing: 2px;
+    letter-spacing: 2.5px;
     text-transform: uppercase;
 }
 
 .flourish {
+    font-family: var(--font-playfair);
+    font-size: 1.25em; /* Increased ornamental size */
     font-weight: 400;
-    opacity: 0.6;
-    margin: 0 4px;
+    opacity: 0.85; /* Increased opacity */
+    margin: 0 6px;
+    vertical-align: middle;
 }
 
 body.scroll-unlocked .sticky-header {
     opacity: 0.9;
 }
 
-/* Interaction Prompt */
+/* Prompt constraints */
 .interaction-prompt {
     position: absolute;
-    bottom: 25dvh;
+    bottom: 25vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -172,12 +171,11 @@ body.scroll-unlocked .sticky-header {
     100% { transform: translate(-50%, 15px); opacity: 0; }
 }
 
-/* Scroll Overlay */
 .scroll-wrapper {
     position: relative;
     z-index: 2;
     pointer-events: none;
-    display: none; /* Do not render or allow space allocation until video finishes to prevent bad scroll restores */
+    display: none; 
 }
 
 body.scroll-unlocked .scroll-wrapper {
@@ -185,25 +183,23 @@ body.scroll-unlocked .scroll-wrapper {
     pointer-events: auto;
 }
 
-/* Font Classes */
 .main-font { font-family: var(--font-monte); }
 .secondary-font { font-family: var(--font-playfair); }
 
-/* Snapping Elements */
+/* Snapping restricted to vh to fix mobile bug */
 .snap-segment {
     scroll-snap-align: start;
-    scroll-snap-stop: always;
-    height: 100dvh;
+    scroll-snap-stop: normal; /* "normal" prevents jarring jerky locks during free-fling */
+    height: 100vh;
     width: 100%;
     position: relative;
     z-index: 1;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: 15dvh; /* provides consistent clearance from the top header */
+    padding-top: 15vh;
 }
 
-/* Direct Overlay Content */
 .reveal-content {
     text-align: center;
     transform: translateY(20px);
@@ -220,33 +216,33 @@ body.scroll-unlocked .scroll-wrapper {
 
 /* Intro specific */
 .hero-name {
-    font-size: 5.5rem;
+    font-size: 6.5rem; /* Increased size significantly */
     font-weight: 400;
     line-height: 1;
     color: var(--text-primary);
 }
 
 .hero-weds {
-    font-style: italic;
-    font-size: 2.5rem;
+    font-size: 5rem; /* Increased significantly */
     color: var(--text-subtitle);
-    margin: 5px 0;
+    margin: -10px 0; /* Tightened gap visually */
+    line-height: 1;
 }
 
 /* Secondary */
 .invitation-text {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 2rem;
+    margin-bottom: 3.5rem; /* Moved string higher relative to people bounds */
     color: var(--text-primary);
 }
 
 .person-block {
-    margin: 15px 0;
+    margin: 5px 0; /* Reduced to pull content closer */
 }
 
 .name-focus {
-    font-size: 4rem;
+    font-size: 3.5rem;
     font-weight: 400;
     line-height: 1.1;
     color: var(--text-primary);
@@ -254,17 +250,17 @@ body.scroll-unlocked .scroll-wrapper {
 
 .undertext {
     font-size: 0.95rem;
-    font-weight: 700; /* significantly thicker per request */
+    font-weight: 700; 
     color: var(--text-subtitle);
     margin-top: 2px;
     line-height: 1.4;
 }
 
 .ampersand {
-    font-size: 4rem;
+    font-size: 3rem;
     line-height: 1;
     color: var(--text-punch);
-    margin: 0px 0;
+    margin: 4px 0; /* Reeled inwards to reduce vertical gap */
 }
 
 /* Date */
@@ -282,7 +278,7 @@ body.scroll-unlocked .scroll-wrapper {
 
 .event-time.highlight {
     font-weight: 700;
-    color: var(--text-punch); /* Boldest color specifically for Lunch */
+    color: var(--text-punch); 
     font-size: 1.6rem;
     margin-top: 20px;
 }
@@ -321,41 +317,61 @@ body.scroll-unlocked .scroll-wrapper {
     transition: transform 0.3s ease;
 }
 
+.map-link:hover {
+    transform: translateY(-5px);
+}
+
 .map-icon-container {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    /* Simplified neutral elegant container */
     background: transparent;
     padding: 0;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden; /* Enables deep scaling natively */
 }
 
 .map-icon {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    object-fit: cover; /* ensures full circular crop from edge to edge smoothly */
+    object-fit: cover; 
+    transform: scale(2.2); /* Effectively crops inwards to half radius dynamically */
+}
+
+.map-button-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(90, 55, 40, 0.15); /* Warm, subtle brown tone */
+    border: 1px solid rgba(90, 55, 40, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    border-radius: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.google-maps-svg {
+    width: 18px;
+    height: 18px;
 }
 
 .map-button-text {
     font-family: var(--font-pt);
     font-size: 0.9rem;
     font-weight: 700;
-    color: white;
-    background: rgba(30,30,30,0.85); /* distinct official-ish button */
-    padding: 10px 22px;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
 }
 
 /* Scroll indicator */
 .scroll-indicator {
     position: absolute;
-    bottom: 48dvh;
+    bottom: 48vh;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -365,7 +381,7 @@ body.scroll-unlocked .scroll-wrapper {
 }
 
 .scroll-indicator.active {
-    opacity: 1; /* higher visibility */
+    opacity: 1; 
     animation: bounce 2s infinite ease-in-out;
 }
 
@@ -380,7 +396,7 @@ body.scroll-unlocked .scroll-wrapper {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 45dvh; 
+    height: 45vh; 
     z-index: 10;
     pointer-events: none;
     opacity: 0;
@@ -393,7 +409,7 @@ body.scroll-unlocked .scroll-wrapper {
 .foreground-footer img {
     width: 100%;
     height: 100%;
-    max-height: 45dvh; 
+    max-height: 45vh; 
     object-fit: cover;
     object-position: center; 
     display: block;
@@ -405,14 +421,19 @@ body.scroll-unlocked .scroll-wrapper {
 
 /* Responsive targeting */
 @media (max-width: 768px) {
-    .snap-segment { padding-top: 13dvh; }
-    .hero-name { font-size: 4rem; }
-    .hero-weds { font-size: 2rem; }
-    .name-focus { font-size: 3rem; }
+    .snap-segment { padding-top: 13vh; }
+    .hero-name { font-size: 5rem; }
+    .hero-weds { font-size: 4rem; margin: -5px 0; }
+    .name-focus { font-size: 2.8rem; }
     .venue-name { font-size: 2.6rem; }
     .venue-sub { font-size: 1.1rem; }
-    .undertext { font-size: 0.9rem; }
+    .undertext { font-size: 0.85rem; }
     .date-focus { font-size: 2.5rem; }
-    .scroll-indicator { bottom: 46dvh; }
-    .interaction-prompt { bottom: 22dvh; }
+    .scroll-indicator { bottom: 46vh; }
+    .interaction-prompt { bottom: 22vh; }
+}
+
+@media (max-height: 700px) {
+    .hero-name { font-size: 3.5rem; }
+    .hero-weds { font-size: 2.5rem; }
 }

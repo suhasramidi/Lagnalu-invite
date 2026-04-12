@@ -9,10 +9,8 @@
 </head>
 <body>
     
-    <!-- State Preloader to handle tab-suspension black screens -->
     <div id="boot-overlay"></div>
 
-    <!-- Fixed Video Container -->
     <div class="video-wrapper" id="video-wrapper">
         <video id="intro-video" muted playsinline preload="auto">
             <source src="Sped.mp4#t=0.001" type="video/mp4">
@@ -25,24 +23,20 @@
         </div>
     </div>
 
-    <!-- Background applied after video finishes -->
     <div class="static-bg" id="static-bg"></div>
 
-    <!-- Sticky Header -->
     <div class="sticky-header" id="sticky-header">
         <span class="flourish">~</span> Lagna Pathrika Event <span class="flourish">~</span>
     </div>
 
     <!-- Scrollable Area -->
     <div class="scroll-wrapper" id="scroll-wrapper">
-        
         <div class="content-wrapper" id="content-wrapper">
             
-            <!-- Page 1 Intro -->
             <section class="text-segment snap-segment first-page" id="first-page">
-                <div class="reveal-content text-top-half" style="margin-top: 5dvh;">
+                <div class="reveal-content text-top-half" style="margin-top: 5vh;">
                     <h1 class="hero-name main-font">Sahithi</h1>
-                    <div class="hero-weds secondary-font">&</div>
+                    <div class="hero-weds main-font">&</div>
                     <h1 class="hero-name main-font">Harsha</h1>
                 </div>
                 
@@ -51,7 +45,6 @@
                 </div>
             </section>
             
-            <!-- Page 2 Details -->
             <section class="text-segment snap-segment">
                 <div class="reveal-content text-top-half wide-content">
                     <p class="invitation-text secondary-font">You are cordially invited to the Lagna Pathrika Event of</p>
@@ -61,7 +54,7 @@
                         <p class="undertext secondary-font">D/O Dr. Ramidi Venkata Siva Rama Krishna Prasad & Ramidi Madhuri Devi</p>
                     </div>
 
-                    <div class="ampersand main-font">&amp;</div>
+                    <div class="ampersand main-font">&</div>
 
                     <div class="person-block">
                         <h2 class="name-focus main-font">Harsha</h2>
@@ -70,7 +63,6 @@
                 </div>
             </section>
 
-            <!-- Page 3 Date -->
             <section class="text-segment snap-segment">
                 <div class="reveal-content text-top-half">
                     <h2 class="date-focus secondary-font">26th April, 2026</h2>
@@ -79,7 +71,6 @@
                 </div>
             </section>
 
-            <!-- Page 4 Map/Venue -->
             <section class="text-segment snap-segment">
                 <div class="reveal-content text-top-half map-content">
                     <p class="venue-label secondary-font">VENUE</p>
@@ -90,7 +81,14 @@
                         <div class="map-icon-container">
                             <img src="map_icon.png" alt="Google Maps" class="map-icon">
                         </div>
-                        <span class="map-button-text">Google Maps ↗</span>
+                        <div class="map-button-container">
+                            <!-- Simple Google Maps style pin icon to enhance familiarity -->
+                            <svg class="google-maps-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" stroke="#EA4335" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="9" r="3" fill="#34A853"/>
+                            </svg>
+                            <span class="map-button-text">Google Maps</span>
+                        </div>
                     </a>
                 </div>
             </section>
