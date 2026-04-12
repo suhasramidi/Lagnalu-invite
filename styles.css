@@ -88,7 +88,8 @@ body.scroll-unlocked {
     text-align: center;
     padding: 10px 0;
     font-family: var(--font-pt);
-    font-size: 1.45rem; /* Increased Size */
+    font-size: clamp(0.9rem, 5vw, 1.45rem); /* Dynamically scales sizing between extremes */
+    white-space: nowrap; /* Prevents flourishes from strictly breaking lines */
     font-weight: 700;
     color: var(--text-punch);
     mix-blend-mode: multiply;
@@ -198,6 +199,10 @@ body.scroll-unlocked .scroll-wrapper {
     justify-content: center;
     align-items: flex-start;
     padding-top: 15vh;
+}
+
+.snap-segment.last-segment {
+    scroll-snap-align: end;
 }
 
 .reveal-content {

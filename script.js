@@ -21,13 +21,18 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.add('ready'); // Fades the safety boot-overlay
     };
     
+    // Absolute hard wipe to guarantee the browser overwrites the tab's internal scroll memory right BEFORE WhatsApp caches it
+    window.addEventListener('beforeunload', () => {
+        window.scrollTo(0, 0);
+    });
+
     // iOS/Browser "Recent apps" tab-switch failover
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
-            // Absolute reload on cache detection to circumvent frozen states
             window.location.reload();
         } else {
             enforceReset();
+            setTimeout(() => window.scrollTo(0, 0), 10);
         }
     });
 
@@ -94,6 +99,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Lock document scroll exactly to the top pixel seamlessly
         window.scrollTo(0, 0);
+        // Force an immediate layout recalculation natively to bypass delayed frame caches
+        requestAnimationFrame(() => {
+            window.scrollTo(0, 0);
+            setTimeout(() => window.scrollTo(0, 0), 50);
+        });
 
         // Elegantly reveal the integrated first page
         const firstPageItems = document.querySelectorAll('#first-page .reveal-content');
