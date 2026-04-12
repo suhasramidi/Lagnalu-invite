@@ -1,82 +1,115 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Failsafe: Prevent browser keeping scroll position on reload which breaks snap layout
+    // Core Failsafes: Block browser auto-scroll restoration
     if ('scrollRestoration' in history) {
         history.scrollRestoration = 'manual';
     }
-    window.scrollTo(0, 0);
-
+    
     const video = document.getElementById('intro-video');
+    const videoWrapper = document.getElementById('video-wrapper');
     const interactionPrompt = document.getElementById('interaction-prompt');
     const foregroundFooter = document.getElementById('foreground-footer');
     const scrollIndicator = document.querySelector('.scroll-indicator');
     const revealContents = document.querySelectorAll('.reveal-content');
-
+    
     let videoStarted = false;
     let videoCompleted = false;
 
-    // Helper to start the video
+    // Hard reset mechanism to purge bad load mapping
+    const enforceReset = () => {
+        window.scrollTo(0, 0);
+        document.body.classList.remove('scroll-unlocked');
+        document.body.classList.add('ready'); // Fades the safety boot-overlay
+    };
+    
+    // iOS/Browser "Recent apps" tab-switch failover
+    window.addEventListener('pageshow', (event) => {
+        if (event.persisted) {
+            // Absolute reload on cache detection to circumvent frozen states
+            window.location.reload();
+        } else {
+            enforceReset();
+        }
+    });
+
+    // iOS WebKit exact first frame trick
+    if (video) {
+        // Must load to evaluate buffer
+        video.load();
+        video.currentTime = 0.001; 
+    }
+
+    // Safely attempt the playback sequence
     const startVideo = () => {
         if (!videoStarted) {
             videoStarted = true;
             interactionPrompt.classList.add('hidden');
             
-            // Attempt to play.
             video.play().catch(e => {
-                console.warn('Video playback failed', e);
+                console.warn('Video playback completely blocked or failed:', e);
+                // Hard skip to UI if user device fundamentally refuses MP4
                 unlockScroll();
             });
         }
     };
 
-    // Listen to first user interaction
     window.addEventListener('wheel', startVideo, { once: true });
     window.addEventListener('touchstart', startVideo, { once: true });
     window.addEventListener('click', startVideo, { once: true });
     window.addEventListener('keydown', startVideo, { once: true });
 
-    // Monitor video progress
+    // Stream progression mapping
     video.addEventListener('timeupdate', () => {
         if (video.duration) {
             const progress = video.currentTime / video.duration;
             
-            // Fade in footer at 90%
+            // Trigger footer overlay 
             if (progress >= 0.9) {
                 foregroundFooter.classList.add('active');
             }
 
-            // Unlock scroll at 98%
-            if (progress >= 0.98 && !videoCompleted) {
+            // Execute final transition milliseconds before the clip freezes
+            if (progress >= 0.99 && !videoCompleted) {
                 unlockScroll();
             }
         }
     });
 
+    // Native fallback callback
     video.addEventListener('ended', () => {
         if (!videoCompleted) unlockScroll();
     });
 
+    // Sequence for transferring UI priority from the video wrapper strictly to the Scroll view
     function unlockScroll() {
+        if (videoCompleted) return;
         videoCompleted = true;
+        
+        // Dissolve and remove video layer to disable interference
+        videoWrapper.classList.add('hide-post-play');
+        setTimeout(() => { videoWrapper.style.display = 'none'; }, 1500);
+
+        // Turn on the CSS snap scroll engine
         document.body.classList.add('scroll-unlocked');
         foregroundFooter.classList.add('active');
         
-        // Trigger reveal of first page content immediately
+        // Lock document scroll exactly to the top pixel seamlessly
+        window.scrollTo(0, 0);
+
+        // Elegantly reveal the integrated first page
         const firstPageItems = document.querySelectorAll('#first-page .reveal-content');
         firstPageItems.forEach(item => item.classList.add('visible'));
 
-        // Show scroll indicator after first text reveals
         if (scrollIndicator) {
             setTimeout(() => {
                 scrollIndicator.classList.add('active');
-            }, 1000); 
+            }, 800); 
         }
     }
 
-    // Setup intersection observer for revealing subsequent content blocks
+    // Advanced dynamic visibility trigger using Intersection Observers mapped perfectly to Snap boundaries
     const observerOptions = {
         root: null,
         rootMargin: '0px',
-        // Slight lower threshold to trigger as it enters the bottom before snapping up
         threshold: 0.25
     };
 
