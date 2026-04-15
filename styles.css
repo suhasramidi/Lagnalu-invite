@@ -8,6 +8,10 @@
     --font-monte: 'MonteCarlo', var(--font-telugu), cursive;
     --font-pt: 'PT Serif', var(--font-telugu), serif;
     --font-playfair: 'Playfair Display', var(--font-telugu), serif;
+    
+    /* Global safe area variables */
+    --safe-content-height: 55dvh;
+    --footer-height: 45dvh;
 }
 
 * {
@@ -32,6 +36,11 @@ body {
     min-height: -webkit-fill-available; /* iOS Safari dynamic viewport fix */
     position: fixed;         /* Prevents iOS rubber-band from exposing black */
     width: 100%;
+    
+    /* Browser Color Normalization & Smoothing */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 #boot-overlay {
@@ -95,7 +104,7 @@ body.scroll-unlocked {
     text-align: center;
     padding: 10px 0;
     font-family: var(--font-pt);
-    font-size: clamp(0.7rem, 4.5vw, 1.45rem);
+    font-size: clamp(0.7rem, 4.5vw, 1.1rem); /* Capped to prevent overkill scaling */
     white-space: nowrap;
     font-weight: 700;
     color: var(--text-punch);
@@ -104,7 +113,7 @@ body.scroll-unlocked {
     z-index: 5;
     pointer-events: none;
     transition: opacity 1.5s ease;
-    letter-spacing: 2.5px;
+    letter-spacing: clamp(1.5px, 0.5vw, 2.5px);
     text-transform: uppercase;
 }
 
@@ -146,10 +155,11 @@ body.scroll-unlocked.header-visible .sticky-header {
 
 .prompt-text {
     font-family: var(--font-pt);
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
     font-weight: 400;
     letter-spacing: 1.5px;
     text-transform: uppercase;
+    color: #ffffff; /* Explicit for Android Chrome fallback override */
 }
 
 .mouse-icon {
@@ -202,16 +212,19 @@ body.scroll-unlocked .scroll-wrapper {
 
 .snap-segment {
     scroll-snap-align: start;
-    scroll-snap-stop: always; /* Ensures one section at a time, no skipping */
+    scroll-snap-stop: always;
     height: 100dvh;
     width: 100%;
     position: relative;
     z-index: 1;
+    /* Safe content area: top area for header, bottom reserved for footer overlay */
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    padding-top: max(8dvh, 45px); /* Header space */
-    padding-bottom: 45dvh; /* Footer space constraint */
+    /* Header clearance at top, footer clearance at bottom — both via layout, not pixels */
+    padding-top: max(8dvh, 40px);
+    padding-bottom: var(--footer-height);
+    box-sizing: border-box;
 }
 
 .snap-segment.last-segment {
@@ -220,16 +233,19 @@ body.scroll-unlocked .scroll-wrapper {
 
 .reveal-content {
     text-align: center;
-    transform: translateY(3dvh);
+    transform: translateY(2dvh);
     opacity: 0;
     transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 1.2s ease;
     width: 90%;
     max-width: 600px;
-    height: 100%;
+    /* Fills the safe area between header and footer padding constraints */
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    /* Never overflow upward or downward */
+    overflow: hidden;
 }
 
 .reveal-content.visible {
@@ -420,22 +436,23 @@ body.scroll-unlocked .scroll-wrapper {
 /* Global Scroll Arrow */
 .global-scroll-arrow {
     position: fixed;
-    bottom: 47dvh; /* Specifically sits 2dvh above the 45dvh footer */
+    /* Layout rule: sit exactly at top of footer overlay + a small breathing gap */
+    bottom: calc(var(--footer-height) + 1dvh);
     left: 50%;
     transform: translateX(-50%);
-    width: clamp(52px, 13.5vw, 72px); /* Reduced to 75% of previous size for better balance */
-    height: clamp(52px, 13.5vw, 72px);
+    width: clamp(44px, 11vw, 60px);
+    height: clamp(44px, 11vw, 60px);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px; /* Reduced internal padding to let the icon fill more space */
+    padding: 8px;
     color: var(--text-primary);
     z-index: 15;
     opacity: 0;
     pointer-events: none;
     transition: opacity 1.5s ease, transform 0.2s ease;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent; /* Remove mobile flicker on tap */
+    -webkit-tap-highlight-color: transparent;
 }
 
 .global-scroll-arrow svg {
@@ -484,7 +501,7 @@ body.hide-arrow .global-scroll-arrow {
 .foreground-footer img {
     width: 100%;
     height: 100%;
-    max-height: 45vh; 
+    max-height: 45dvh; 
     object-fit: cover;
     object-position: center; 
     display: block;
@@ -534,7 +551,7 @@ body.hide-arrow .global-scroll-arrow {
 /* Responsive targeting */
 @media (max-width: 768px) {
     .snap-segment { padding-top: max(6dvh, 35px); }
-    .global-scroll-arrow { bottom: 47dvh; }
+    /* Arrow uses calc(var(--footer-height) + 1dvh) globally — no override needed */
     .interaction-prompt { bottom: 22dvh; }
 }
 
