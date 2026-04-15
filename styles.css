@@ -222,7 +222,7 @@ body.scroll-unlocked .scroll-wrapper {
     justify-content: center;
     align-items: flex-start;
     /* Header clearance at top, footer clearance at bottom — both via layout, not pixels */
-    padding-top: max(8dvh, 40px);
+    padding-top: max(15dvh, 80px);
     padding-bottom: var(--footer-height);
     box-sizing: border-box;
 }
@@ -550,14 +550,14 @@ body.hide-arrow .global-scroll-arrow {
 
 /* Responsive targeting */
 @media (max-width: 768px) {
-    .snap-segment { padding-top: max(6dvh, 35px); }
+    .snap-segment { padding-top: max(12dvh, 65px); }
     /* Arrow uses calc(var(--footer-height) + 1dvh) globally — no override needed */
     .interaction-prompt { bottom: 22dvh; }
 }
 
 /* Short screens: tablets landscape, small Android phones */
 @media (max-height: 700px) {
-    .snap-segment { padding-top: max(5dvh, 30px); }
+    .snap-segment { padding-top: max(10dvh, 55px); }
     .hero-name { font-size: clamp(3rem, 10vh, 4.5rem); }
     .hero-weds { font-size: clamp(2.2rem, 8vh, 3.5rem); }
     .name-focus { font-size: clamp(1.6rem, 4.5vh, 2.4rem) !important; }
@@ -570,7 +570,7 @@ body.hide-arrow .global-scroll-arrow {
 
 /* Very short screens: landscape phones */
 @media (max-height: 500px) {
-    .snap-segment { padding-top: max(4dvh, 25px); }
+    .snap-segment { padding-top: max(8dvh, 45px); }
     .hero-name { font-size: clamp(2rem, 8vh, 2.8rem); }
     .hero-weds { font-size: clamp(1.5rem, 6vh, 2rem); }
     .name-focus { font-size: clamp(1.6rem, 5vh, 2rem) !important; }
