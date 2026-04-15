@@ -3,9 +3,10 @@
     --text-primary: #2d1810;
     --text-subtitle: #4a281b; 
     --text-punch: #592020;
-    --font-monte: 'MonteCarlo', cursive;
-    --font-pt: 'PT Serif', serif;
-    --font-playfair: 'Playfair Display', serif;
+    --font-telugu: 'Noto Serif Telugu', 'Tiro Telugu', serif;
+    --font-monte: 'MonteCarlo', var(--font-telugu), cursive;
+    --font-pt: 'PT Serif', var(--font-telugu), serif;
+    --font-playfair: 'Playfair Display', var(--font-telugu), serif;
 }
 
 * {
@@ -116,7 +117,7 @@ body.scroll-unlocked {
     vertical-align: middle;
 }
 
-body.scroll-unlocked .sticky-header {
+body.scroll-unlocked.header-visible .sticky-header {
     opacity: 0.9;
 }
 
@@ -229,6 +230,30 @@ body.scroll-unlocked .scroll-wrapper {
 .reveal-content.visible {
     transform: translateY(0);
     opacity: 1;
+}
+
+/* Ganesh Opening Page */
+.ganesh-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: clamp(10px, 2vh, 15px);
+    width: 100%;
+}
+
+.ganesh-img {
+    width: clamp(140px, 35vw, 240px);
+    object-fit: contain;
+    margin-bottom: clamp(10px, 2.5vh, 25px);
+}
+
+.ganesh-text {
+    font-family: var(--font-telugu);
+    font-size: clamp(1.2rem, 3.5vh, 1.8rem);
+    font-weight: 600;
+    color: var(--text-punch);
+    letter-spacing: 0.5px;
+    line-height: 1.4;
 }
 
 /* Intro specific */
@@ -387,21 +412,46 @@ body.scroll-unlocked .scroll-wrapper {
     letter-spacing: 0.5px;
 }
 
-/* Scroll indicator */
-.scroll-indicator {
-    position: absolute;
-    bottom: 53vh;
+/* Global Scroll Arrow */
+.global-scroll-arrow {
+    position: fixed;
+    bottom: 48vh; /* Lowered from 53vh to clear text better */
     left: 50%;
     transform: translateX(-50%);
+    width: clamp(52px, 13.5vw, 72px); /* Reduced to 75% of previous size for better balance */
+    height: clamp(52px, 13.5vw, 72px);
     display: flex;
-    opacity: 0;
+    justify-content: center;
+    align-items: center;
+    padding: 10px; /* Reduced internal padding to let the icon fill more space */
     color: var(--text-primary);
-    transition: opacity 1.5s ease;
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease, transform 0.2s ease;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent; /* Remove mobile flicker on tap */
 }
 
-.scroll-indicator.active {
-    opacity: 1; 
+.global-scroll-arrow svg {
+    width: 85%; /* Icon now fills more of its container */
+    height: 85%;
+}
+
+.global-scroll-arrow.active {
+    opacity: 0.85; 
+    pointer-events: auto;
     animation: bounce 2s infinite ease-in-out;
+}
+
+.global-scroll-arrow:active {
+    transform: translateX(-50%) scale(0.9);
+}
+
+/* Hide arrow when viewing last page */
+body.hide-arrow .global-scroll-arrow {
+    opacity: 0;
+    pointer-events: none;
 }
 
 @keyframes bounce {
@@ -439,10 +489,47 @@ body.scroll-unlocked .scroll-wrapper {
     opacity: 1;
 }
 
+/* Background Audio Mute Toggle */
+.mute-toggle {
+    position: fixed;
+    bottom: clamp(20px, 3vh, 30px);
+    left: clamp(15px, 4vw, 25px);
+    width: clamp(40px, 10vw, 50px);
+    height: clamp(40px, 10vw, 50px);
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(234, 221, 202, 0.2);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 20;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.5s ease, transform 0.2s ease, background 0.3s ease;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mute-toggle.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.mute-toggle:active {
+    transform: scale(0.9);
+}
+
+.mute-toggle svg {
+    width: 55%;
+    height: 55%;
+}
+
 /* Responsive targeting */
 @media (max-width: 768px) {
     .snap-segment { padding-top: 13vh; }
-    .scroll-indicator { bottom: 53vh; }
+    .global-scroll-arrow { bottom: 48vh; }
     .interaction-prompt { bottom: 22vh; }
 }
 

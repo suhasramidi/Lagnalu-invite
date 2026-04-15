@@ -8,22 +8,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoWrapper = document.getElementById('video-wrapper');
     const interactionPrompt = document.getElementById('interaction-prompt');
     const foregroundFooter = document.getElementById('foreground-footer');
-    const scrollIndicator = document.querySelector('.scroll-indicator');
+    const globalScrollArrow = document.getElementById('global-scroll-arrow');
     const revealContents = document.querySelectorAll('.reveal-content');
+    
+    // Audio elements
+    const bgMusic = document.getElementById('bg-music');
+    const muteToggle = document.getElementById('mute-toggle');
     
     let videoStarted = false;
     let videoCompleted = false;
+    let audioStarted = false;
 
     // Hard reset mechanism to purge bad load mapping
     const enforceReset = () => {
         window.scrollTo(0, 0);
         document.body.classList.remove('scroll-unlocked');
         document.body.classList.add('ready'); // Fades the safety boot-overlay
+        if (bgMusic) bgMusic.pause();
     };
     
     // Absolute hard wipe to guarantee the browser overwrites the tab's internal scroll memory right BEFORE WhatsApp caches it
     window.addEventListener('beforeunload', () => {
         window.scrollTo(0, 0);
+        if (bgMusic) bgMusic.pause();
     });
 
     // iOS/Browser "Recent apps" tab-switch failover
@@ -65,6 +72,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 unlockScroll();
             });
         }
+
+        // iOS strictly mandates audio playback must be directly inside the user action stack
+        if (!audioStarted && bgMusic) {
+            audioStarted = true;
+            bgMusic.play().catch(e => console.warn('Audio blocked:', e));
+        }
     };
 
     window.addEventListener('wheel', startVideo, { once: true });
@@ -80,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Trigger footer overlay 
             if (progress >= 0.9) {
                 foregroundFooter.classList.add('active');
+                if (muteToggle) muteToggle.classList.add('active');
             }
 
             // Execute final transition milliseconds before the clip freezes
@@ -106,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Turn on the CSS snap scroll engine
         document.body.classList.add('scroll-unlocked');
         foregroundFooter.classList.add('active');
+        if (muteToggle) muteToggle.classList.add('active');
         
         // Lock document scroll exactly to the top pixel seamlessly
         window.scrollTo(0, 0);
@@ -116,14 +131,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Elegantly reveal the integrated first page
-        const firstPageItems = document.querySelectorAll('#first-page .reveal-content');
-        firstPageItems.forEach(item => item.classList.add('visible'));
+        const ganeshPageItems = document.querySelectorAll('#ganesh-page .reveal-content');
+        ganeshPageItems.forEach(item => item.classList.add('visible'));
 
-        if (scrollIndicator) {
+        if (globalScrollArrow) {
             setTimeout(() => {
-                scrollIndicator.classList.add('active');
+                globalScrollArrow.classList.add('active');
             }, 800); 
+            
+            // Re-bind the click event here or just ensure it's bound.
+            // Since it's global, we bind it outside.
         }
+    }
+    
+    if (globalScrollArrow) {
+        globalScrollArrow.addEventListener('click', () => {
+            const wrapper = document.getElementById('scroll-wrapper');
+            if (wrapper) {
+                // Execute a smooth native scroll burst by exactly one viewport segment height
+                wrapper.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            }
+        });
+    }
+
+    // Bind Mutator toggle listener safely outside of main initialization bounds
+    if (muteToggle && bgMusic) {
+        muteToggle.addEventListener('click', (e) => {
+            // Stop toggle from causing scroll snapping conflicts if hit
+            e.stopPropagation(); 
+            
+            bgMusic.muted = !bgMusic.muted;
+            const iconOn = muteToggle.querySelector('.icon-on');
+            const iconOff = muteToggle.querySelector('.icon-off');
+            
+            if (bgMusic.muted) {
+                if (iconOn) iconOn.style.display = 'none';
+                if (iconOff) iconOff.style.display = 'block';
+            } else {
+                if (iconOn) iconOn.style.display = 'block';
+                if (iconOff) iconOff.style.display = 'none';
+            }
+        });
     }
 
     // Advanced dynamic visibility trigger using Intersection Observers mapped perfectly to Snap boundaries
@@ -136,14 +184,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const cardObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                if (!entry.target.closest('#first-page')) {
+                if (!entry.target.closest('#ganesh-page')) {
                     entry.target.classList.add('visible');
                 }
             } else {
                 const rect = entry.boundingClientRect;
                 const windowHeight = window.innerHeight;
                 if (rect.top > windowHeight || rect.bottom < 0) {
-                   if (!entry.target.closest('#first-page')) {
+                   if (!entry.target.closest('#ganesh-page')) {
                        entry.target.classList.remove('visible');
                    }
                 }
@@ -152,4 +200,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }, observerOptions);
 
     revealContents.forEach(content => cardObserver.observe(content));
+    
+    // Dedicated observer for managing persistent layouts structurally
+    const layoutStateObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                if (entry.target.id === 'ganesh-page') {
+                    document.body.classList.remove('header-visible');
+                } else {
+                    document.body.classList.add('header-visible');
+                }
+
+                if (entry.target.classList.contains('last-segment')) {
+                    document.body.classList.add('hide-arrow');
+                } else {
+                    document.body.classList.remove('hide-arrow');
+                }
+            }
+        });
+    }, { threshold: 0.5 });
+    
+    document.querySelectorAll('.snap-segment').forEach(seg => layoutStateObserver.observe(seg));
 });

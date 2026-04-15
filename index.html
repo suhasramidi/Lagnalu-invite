@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lagna Pathrika</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MonteCarlo&family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Serif+Telugu:wght@400;600;700&family=Tiro+Telugu&display=swap" rel="stylesheet">
 </head>
 <body>
     
@@ -33,15 +33,18 @@
     <div class="scroll-wrapper" id="scroll-wrapper">
         <div class="content-wrapper" id="content-wrapper">
             
-            <section class="text-segment snap-segment first-page" id="first-page">
+            <section class="text-segment snap-segment ganesh-page" id="ganesh-page">
+                <div class="reveal-content ganesh-content">
+                    <img src="ganesh-compressed.png" alt="Lord Ganesha" class="ganesh-img">
+                    <p class="ganesh-text">|| ఓం శ్రీ గణేశాయ నమః ||</p>
+                </div>
+            </section>
+
+            <section class="text-segment snap-segment" id="first-page">
                 <div class="reveal-content text-top-half">
                     <h1 class="hero-name main-font">Sahithi</h1>
                     <div class="hero-weds main-font">&</div>
                     <h1 class="hero-name main-font">Harsha</h1>
-                </div>
-                
-                <div class="scroll-indicator fade-in-later">
-                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
             </section>
             
@@ -98,6 +101,33 @@
     <!-- Foreground Footer stays fixed above all content -->
     <div class="foreground-footer" id="foreground-footer">
         <img src="Foreground.png" alt="Sticky Footer Overlay">
+    </div>
+
+    <!-- Global Persistent Scroll Arrow -->
+    <div class="global-scroll-arrow" id="global-scroll-arrow">
+        <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M13 2.5V17.67L18.59 12.08L20 13.5L12 21.5L4 13.5L5.41 12.08L11 17.67V2.5H13Z" />
+        </svg>
+    </div>
+
+    <!-- Background Audio -->
+    <audio id="bg-music" loop preload="none">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Mute Control Toggle -->
+    <div class="mute-toggle" id="mute-toggle">
+        <!-- Speaker ON Icon -->
+        <svg class="icon-on" viewBox="0 0 24 24" fill="none" stroke="#EADDCA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+        </svg>
+        <!-- Speaker OFF/Muted Icon -->
+        <svg class="icon-off" viewBox="0 0 24 24" fill="none" stroke="#EADDCA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+        </svg>
     </div>
 
     <script src="script.js"></script>
