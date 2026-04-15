@@ -19,6 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoCompleted = false;
     let audioStarted = false;
 
+    // Set subtle background volume
+    if (bgMusic) {
+        bgMusic.volume = 0.3;
+    }
+
     // Hard reset mechanism to purge bad load mapping
     const enforceReset = () => {
         window.scrollTo(0, 0);
@@ -32,6 +37,31 @@ document.addEventListener('DOMContentLoaded', () => {
         window.scrollTo(0, 0);
         if (bgMusic) bgMusic.pause();
     });
+
+    window.addEventListener('pagehide', () => {
+        if (bgMusic) bgMusic.pause();
+    });
+
+    // Handle tab visibility (pause when backgrounded)
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            if (bgMusic && !bgMusic.paused) {
+                bgMusic.pause();
+                bgMusic.dataset.wasPlaying = "true";
+            }
+        }
+    });
+
+    // Resume audio only on explicit interaction if it was paused by backgrounding
+    const resumeAudioOnInteraction = () => {
+        if (bgMusic && bgMusic.dataset.wasPlaying === "true") {
+            bgMusic.play().catch(e => console.warn('Audio resume blocked:', e));
+            bgMusic.dataset.wasPlaying = "false";
+        }
+    };
+
+    document.addEventListener('click', resumeAudioOnInteraction);
+    document.addEventListener('touchstart', resumeAudioOnInteraction);
 
     // iOS/Browser "Recent apps" tab-switch failover
     window.addEventListener('pageshow', (event) => {
@@ -77,6 +107,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!audioStarted && bgMusic) {
             audioStarted = true;
             bgMusic.play().catch(e => console.warn('Audio blocked:', e));
+        } else if (audioStarted && bgMusic && bgMusic.paused && bgMusic.dataset.wasPlaying !== "true") {
+             // Only resume if not muted (handled by mute toggle logic via another listener)
+             if (!bgMusic.muted && document.body.classList.contains('scroll-unlocked')) {
+                 // Do not force play unless it is an explicit interaction handled elsewhere
+             }
         }
     };
 
